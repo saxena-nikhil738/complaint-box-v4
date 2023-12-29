@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Card } from "react-bootstrap";
 import "./complaint.css";
+import { toast } from "react-toastify";
 const CompaintCard = (propsval) => {
   const [compData, setCompData] = useState([]);
   const [status, setStatus] = useState();
@@ -43,15 +44,12 @@ const CompaintCard = (propsval) => {
   const twoCalls = async (id, k) => {
     const state = k.target.value;
 
-    console.log(id);
-    console.log(state);
     await axios
       .put("https://complaint-backend-7u2y.onrender.com/updatedstatus", {
         id,
         state,
       })
       .then((user) => {
-        console.log("updated");
         setStatus(k.target.value);
       })
       .catch((err) => console.log(err));
@@ -60,9 +58,7 @@ const CompaintCard = (propsval) => {
   const addNote = async (id) => {
     const value = note;
 
-    // console.log(id);
     setNoteFlag(!noteFlag);
-    // console.log(value);
     await axios
       .put("https://complaint-backend-7u2y.onrender.com/noteadded", {
         id,
@@ -70,7 +66,11 @@ const CompaintCard = (propsval) => {
       })
 
       .then((user) => {
-        console.log("updated");
+        toast.success("Note added please refresh!", {
+          position: toast.POSITION.TOP_RIGHT,
+          className: "toast-message",
+          autoClose: 2000,
+        });
       })
       .catch((err) => console.log(err));
   };

@@ -1,26 +1,25 @@
 import axios from "axios";
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import TextField from "@mui/material/TextField";
-import Main from "../../Main/main";
-// import 'bootstrap/dist/css/bootstrap.min.css'
 import { useAuth } from "../../../context/auth";
 import "./login.css";
 import image from "../../../image/login.jpg";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
   const location = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const [error, setError] = useState();
   const [auth, setAuth] = useAuth();
-  console.log(location?.pathname);
 
   async function submit(e) {
     e.preventDefault();
 
     if (email == "" || password === "") {
-      alert("Fill required details");
+      setError("Fill required cridentials");
     } else {
       await axios
         .post("https://complaint-backend-7u2y.onrender.com/login", {
@@ -28,34 +27,46 @@ const Login = () => {
           password,
         })
         .then((res) => {
-          if (res.data.enum === 0) {
-            if (res.data !== null) {
-              setAuth({
-                ...auth,
-                username: res.data.username,
-                enum: res.data.enum,
-                email: res.data.email,
-                token: res.data.token,
-              });
-              console.log(auth);
-              localStorage.setItem(
-                "auth",
-                JSON.stringify({
-                  username: res.data.username,
-                  email: res.data.email,
-                  enum: res.data.enum,
-                  token: res.data.token,
-                })
-              );
-              console.log(location);
-              navigate(location?.state?.prevUrl || "/");
-            }
+          if (
+            res.data === "Password incorrect" ||
+            res.data === "user not found"
+          ) {
+            setError(res.data);
           } else {
-            alert("No such admin exist!");
+            if (res.data.enum === 0) {
+              if (res.data !== null) {
+                toast.success("Logged in successfully !", {
+                  position: toast.POSITION.TOP_RIGHT,
+                  className: "toast-message",
+                  autoClose: 2000,
+                });
+                setAuth({
+                  ...auth,
+                  username: res.data.username,
+                  enum: res.data.enum,
+                  email: res.data.email,
+                  token: res.data.token,
+                });
+                localStorage.setItem(
+                  "auth",
+                  JSON.stringify({
+                    username: res.data.username,
+                    email: res.data.email,
+                    enum: res.data.enum,
+                    token: res.data.token,
+                  })
+                );
+
+                navigate(location?.state?.prevUrl || "/");
+              }
+            } else {
+              setError("Invalid username password!");
+            }
           }
         })
 
         .catch((error) => {
+          setError("Somthing went wrong!");
           console.log(error);
         });
     }
@@ -100,6 +111,13 @@ const Login = () => {
                   label="Enter password"
                   onChange={(e) => setPassword(e.target.value)}
                 />
+              </div>
+              <div
+                className={
+                  error === undefined ? "invisible-error" : "visible-error mb-3"
+                }
+              >
+                {error}
               </div>
               <div>
                 <button

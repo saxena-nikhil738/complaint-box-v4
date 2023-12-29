@@ -28,3 +28,12 @@
     outline: none;
     align-items: center;
 }
+.invisible-error{
+    visibility: hidden;
+}
+.visible-error{
+    color: red;
+    background-color: white;
+    font-size: 12px;
+    width: 200px;
+}

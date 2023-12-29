@@ -25,31 +25,26 @@ const AllComplaints = () => {
 
   // Records to be displayed on the current page
   const currentRecords = compData.slice(indexOfFirstRecord, indexOfLastRecord);
-
+  const nPages = Math.ceil(compData.length / recordsPerPage);
   // const [currentRecords, setCurrentPages] = useState()
-  const [nPages, setNPages] = useState();
+  // const [nPages, setNPages] = useState();
   // const [temp, setTemp] = useState([]);
   const temp = [];
   const [search, setSearch] = useState("");
   // const n = recordsPerPage;
   let j = 0;
-  console.log(auth.enum);
 
   async function fun(e) {
     // e.preventDefault();
 
-    console.log("all fun");
     try {
       await axios
         .get("https://complaint-backend-7u2y.onrender.com/allcomplaint")
         .then((res) => {
-          console.log("all fun then");
-          console.log(res);
           for (var i = 0; i < res.data?.length; i++) {
             if (auth.enum === 0) {
               temp[j++] = res.data[i];
             } else if (auth.enum === 1) {
-              console.log("@");
               if (auth.email === res.data[i].email) {
                 temp[j++] = res.data[i];
               }
@@ -61,7 +56,6 @@ const AllComplaints = () => {
         })
         .catch((err) => {
           console.log(err);
-          console.log("all fun catch");
         });
     } catch (error) {
       console.log("Error: ", error);
@@ -69,8 +63,7 @@ const AllComplaints = () => {
   }
 
   useEffect(() => {
-    console.log(auth);
-    setNPages(Math.ceil(compData.length / recordsPerPage));
+    // setNPages(Math.ceil(compData.length / recordsPerPage));
     fun();
   }, [auth]);
 

@@ -15,6 +15,8 @@ import Dashboard from "./components/Dashboard/Dashboard";
 import PrivateRoute from "./components/Routes/PrivateRoute";
 import ProcessingComplaints from "./components/Complaints/processingComp";
 import PageNotFound from "./components/PageNotFound";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   {
@@ -22,6 +24,7 @@ function App() {
   }
   return (
     <div>
+      <ToastContainer />
       <Header />
 
       <Routes>

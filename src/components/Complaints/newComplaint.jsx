@@ -9,6 +9,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { useAuth } from "../../context/auth";
 import axios from "axios";
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 
 export default function NewComplaint() {
   const [open, setOpen] = useState(false);
@@ -18,6 +19,7 @@ export default function NewComplaint() {
   const [email, setemail] = useState(auth.email);
   const [category, setCategory] = useState();
   const [description, setDescription] = useState();
+  const [error, setError] = useState();
   // const [appId, setAppId] = useState();
   // const [dateTime, setDateTime] = useState();
 
@@ -31,11 +33,6 @@ export default function NewComplaint() {
   const handleClose = () => {
     setOpen(false);
   };
-  const reset = () => {
-    console.log("reset");
-    setName("");
-    console.log(name, "-");
-  };
 
   useEffect(() => {
     setemail(auth.email);
@@ -44,11 +41,10 @@ export default function NewComplaint() {
   async function submit(e) {
     e.preventDefault();
     if (category === undefined) {
-      alert("Select category");
+      setError("Select category");
     } else if (name === undefined || description === undefined) {
-      alert("Fill the required filled");
+      setError("Fill the required filled");
     } else {
-      console.log(description);
       const d = new Date();
       const appId =
         d.getFullYear() +
@@ -83,12 +79,21 @@ export default function NewComplaint() {
         .then((res) => {
           if (res.data === "info") {
             handleClose();
-            alert("Complaint registered");
+            toast.success("Complaint registered!", {
+              position: toast.POSITION.TOP_RIGHT,
+              className: "toast-message",
+              autoClose: 2000,
+            });
           }
           setCategory(undefined);
           setDescription(undefined);
         })
         .catch((e) => {
+          toast.error("Something went wrong!", {
+            position: toast.POSITION.TOP_RIGHT,
+            className: "toast-message",
+            autoClose: 2000,
+          });
           console.log(e);
         });
     }
@@ -161,12 +166,12 @@ export default function NewComplaint() {
                   </select>
                 </p>
               </div>
-              <p className="name col-12">
+              <p className="name input col-12">
                 <div className="row">
                   <span className="col-3 ml-4 mt-3">Description:</span>
                   <textarea
                     type="text"
-                    style={{ outline: "none" }}
+                    style={{ outline: "none", fontSize: "20px" }}
                     onChange={(e) => {
                       setDescription(e.target.value);
                     }}
@@ -174,6 +179,15 @@ export default function NewComplaint() {
                   />
                 </div>
               </p>
+              <div
+                className={
+                  error === undefined
+                    ? "invisible-error"
+                    : "visible-error mb-3  ml-5"
+                }
+              >
+                {error}
+              </div>
               <DialogActions className="col-12 ">
                 <Button
                   style={{ outline: "none" }}
@@ -183,7 +197,11 @@ export default function NewComplaint() {
                 >
                   Cancel
                 </Button>
-                <Button variant="contained" onClick={submit}>
+                <Button
+                  style={{ outline: "none", border: "none" }}
+                  variant="contained"
+                  onClick={submit}
+                >
                   Submit
                 </Button>
               </DialogActions>

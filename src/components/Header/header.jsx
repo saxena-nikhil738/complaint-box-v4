@@ -5,6 +5,8 @@ import "./header.css";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { DropdownButton, Dropdown, NavLink, Button } from "react-bootstrap";
 import { useAuth } from "../../context/auth";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -15,8 +17,15 @@ const Header = () => {
   const toggle = () => {
     setAuth({
       ...auth,
-      user: null,
+      username: "",
+      enum: "",
+      email: "",
       token: "",
+    });
+    toast.error("Logged out!", {
+      position: toast.POSITION.TOP_RIGHT,
+      className: "toast-message",
+      autoClose: 2000,
     });
     localStorage.removeItem("auth");
     navigate("/");

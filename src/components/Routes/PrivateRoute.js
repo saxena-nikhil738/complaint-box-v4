@@ -9,10 +9,7 @@ export default function PrivateRoute() {
 
   useEffect(() => {
     // console.log(auth.token);
-    console.log(auth?.token);
   }, [auth]);
-
-  console.log(JSON.parse(localStorage.getItem("auth"))?.token);
 
   return JSON.parse(localStorage.getItem("auth"))?.token ? (
     <Outlet />

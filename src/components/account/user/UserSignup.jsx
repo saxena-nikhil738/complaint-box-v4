@@ -4,23 +4,23 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import TextField from "@mui/material/TextField";
 import "./UserSignup.css";
 import image from "../../../image/login.jpg";
+import { toast } from "react-toastify";
 
 const UserSignup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const token = "";
+  const [error, setError] = useState();
   const navigate = useNavigate();
   const location = useLocation();
-  console.log(location.pathname);
 
   const idfy = location.pathname === "/usersignup" ? 1 : 0;
-  console.log(idfy);
 
   async function handleSubmit(e) {
     e.preventDefault();
     if (username === "" || password === "" || email === "") {
-      alert("Fill required details");
+      setError("Fill required details");
     } else {
       await axios
         .post("https://complaint-backend-7u2y.onrender.com/signup", {
@@ -31,15 +31,21 @@ const UserSignup = () => {
           token,
         })
         .then((res) => {
-          console.log(res);
+          setError(res.data.message);
+
           if (!res.data.success) {
-            alert("Email already exist");
+            setError(res.data.message);
           } else {
+            toast.success("User registered!", {
+              position: toast.POSITION.TOP_RIGHT,
+              className: "toast-message",
+              autoClose: 2000,
+            });
             navigate("/userlogin");
-            alert("User registered");
           }
         })
         .catch((e) => {
+          setError("Something went wrong!");
           console.log(e);
         });
     }
@@ -97,6 +103,13 @@ const UserSignup = () => {
                   label="Enter password"
                   onChange={(e) => setPassword(e.target.value)}
                 />
+              </div>
+              <div
+                className={
+                  error === undefined ? "invisible-error" : "visible-error mb-3"
+                }
+              >
+                {error}
               </div>
               <div>
                 <button

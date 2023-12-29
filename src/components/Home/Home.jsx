@@ -6,7 +6,6 @@ import Timeline from "./Timeline.jsx";
 import Footer from "../Footer/footer.jsx";
 
 const Home = () => {
-  console.log("object");
   return (
     <>
       <div className="wrapper">

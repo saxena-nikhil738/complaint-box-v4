@@ -30,18 +30,12 @@ const SolvedComplaints = ({ props }) => {
   const temp = [];
   let j = 0;
 
-  console.log(auth.enum);
-
   const fun = async () => {
     await axios
       .get("https://complaint-backend-7u2y.onrender.com/main/solved")
       .then((res) => {
-        console.log(res);
-        console.log(res.data);
-
         for (var i = 0; i < res.data?.length; i++) {
           if (auth.enum === 1) {
-            console.log("@");
             if (auth.email === res.data[i].email) {
               temp[j++] = res.data[i];
             }
@@ -51,15 +45,12 @@ const SolvedComplaints = ({ props }) => {
         }
         temp.sort((a, b) => parseInt(b.appId, 10) - parseInt(a.appId, 10));
         setCompData(temp);
-        console.log(temp);
       })
       .catch((err) => console.log(err));
   };
   // fun();
   useEffect(() => {
-    console.log("hi solve");
     fun();
-    console.log(compData);
   }, []);
 
   return (

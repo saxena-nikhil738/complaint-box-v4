@@ -4,6 +4,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./UserLogin.css";
 import { useAuth } from "../../../context/auth";
 import image from "../../../image/login.jpg";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const UserLogin = () => {
   const [email, setEmail] = useState("");
@@ -11,11 +13,12 @@ const UserLogin = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [auth, setAuth] = useAuth();
+  const [error, setError] = useState();
 
   async function submit(e) {
     e.preventDefault();
     if (email == "" || password === "") {
-      alert("Fill required details");
+      setError("Fill required cridentials");
     } else {
       await axios
         .post("https://complaint-backend-7u2y.onrender.com/login", {
@@ -23,35 +26,47 @@ const UserLogin = () => {
           password,
         })
         .then((res) => {
-          if (res.data.enum === 1) {
-            if (res.data !== null) {
-              setAuth({
-                ...auth,
-                username: res.data.username,
-                enum: res.data.enum,
-                email: res.data.email,
-                token: res.data.token,
-              });
-              console.log(auth);
-              localStorage.setItem(
-                "auth",
-                JSON.stringify({
-                  username: res.data.username,
-                  email: res.data.email,
-                  enum: res.data.enum,
-                  token: res.data.token,
-                })
-              );
-              console.log(location);
-              // console.log(String(location?.state?.prevUrl));
-              navigate(location?.state?.prevUrl || "/");
-            }
+          if (
+            res.data === "Password incorrect" ||
+            res.data === "user not found"
+          ) {
+            setError(res.data);
           } else {
-            alert("No such user exist!");
+            if (res.data.enum === 1) {
+              if (res.data !== null) {
+                toast.success("Logged in successfully !", {
+                  position: toast.POSITION.TOP_RIGHT,
+                  className: "toast-message",
+                  autoClose: 2000,
+                });
+                setAuth({
+                  ...auth,
+                  username: res.data.username,
+                  enum: res.data.enum,
+                  email: res.data.email,
+                  token: res.data.token,
+                });
+
+                localStorage.setItem(
+                  "auth",
+                  JSON.stringify({
+                    username: res.data.username,
+                    email: res.data.email,
+                    enum: res.data.enum,
+                    token: res.data.token,
+                  })
+                );
+
+                navigate(location?.state?.prevUrl || "/");
+              }
+            } else {
+              setError("Invalid username password!");
+            }
           }
         })
 
         .catch((error) => {
+          setError("Something went wrong");
           console.log(error);
         });
     }
@@ -96,6 +111,13 @@ const UserLogin = () => {
                   label="Enter password"
                   onChange={(e) => setPassword(e.target.value)}
                 />
+              </div>
+              <div
+                className={
+                  error === undefined ? "invisible-error" : "visible-error mb-3"
+                }
+              >
+                {error}
               </div>
               <div>
                 <button

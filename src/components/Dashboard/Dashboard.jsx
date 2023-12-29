@@ -1,15 +1,5 @@
 import React, { useState } from "react";
-import {
-  MDBCol,
-  MDBContainer,
-  MDBRow,
-  MDBCard,
-  MDBCardText,
-  MDBCardBody,
-  MDBCardImage,
-  MDBTypography,
-  MDBIcon,
-} from "mdb-react-ui-kit";
+
 import "./dash-container.css";
 import { useAuth } from "../../context/auth";
 // import { Button } from "react-bootstrap";
@@ -19,9 +9,7 @@ import Button from "@mui/material/Button";
 import image from "../../image/user.png";
 import { TextField } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-
-// // Import the default CSS
-// import "rsuite/dist/rsuite.min.css";
+import { toast } from "react-toastify";
 
 export default function Dashboard() {
   const [auth, setauth] = useAuth();
@@ -29,6 +17,7 @@ export default function Dashboard() {
   const [old, setOld] = useState("");
   const [newPass, setNewPass] = useState("");
   const email = auth.email;
+  const [error, setError] = useState();
   const navigate = useNavigate();
 
   const enableFlag = () => {
@@ -49,11 +38,20 @@ export default function Dashboard() {
           }
         )
         .then((res) => {
-          alert("password changed");
-          setFlag(true);
+          if (res.data.message === "Password changed") {
+            setError("Password changed");
+            toast.success("Password changed!", {
+              position: toast.POSITION.TOP_RIGHT,
+              className: "toast-message",
+              autoClose: 2000,
+            });
+            setFlag(true);
+          } else {
+            setError("Something went wrong!");
+          }
         })
         .catch((e) => {
-          alert("Something went wrong");
+          setError("Something went wrong");
           console.log(e);
         });
     }
@@ -145,11 +143,6 @@ export default function Dashboard() {
                     <br />
                     <div className="enter-pass ">
                       <div className="pass">
-                        {/* <label className=" " htmlFor="">
-                            <pre style={{ fontSize: "16px" }}>
-                              Old password:{" "}
-                            </pre>
-                          </label> */}
                         <input
                           placeholder="Old password"
                           onChange={(e) => setOld(e.target.value)}
@@ -159,11 +152,6 @@ export default function Dashboard() {
                       </div>
                       <br />
                       <div className="pass">
-                        {/* <label className="" htmlFor="">
-                            <pre style={{ fontSize: "16px" }}>
-                              New passwprd:{" "}
-                            </pre>
-                          </label> */}
                         <input
                           placeholder="New password"
                           onChange={(e) => setNewPass(e.target.value)}
@@ -172,6 +160,15 @@ export default function Dashboard() {
                         />
                       </div>
                       <br />
+                      <div
+                        className={
+                          error === undefined || "Password changed"
+                            ? "invisible-error"
+                            : "visible-error mb-3"
+                        }
+                      >
+                        {error}
+                      </div>
                       <div className="request">
                         <Button
                           style={{ outline: "none", fontSize: "12px" }}

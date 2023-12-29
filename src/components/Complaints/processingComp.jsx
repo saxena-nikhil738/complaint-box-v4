@@ -30,7 +30,6 @@ const ProcessingComplaints = () => {
   const currentRecords = compData.slice(indexOfFirstRecord, indexOfLastRecord);
 
   //search-box
-  // console.log(compData);
   const nPages = Math.ceil(compData.length / recordsPerPage);
   const temp = [];
   const User = localStorage.getItem("user");
@@ -42,7 +41,6 @@ const ProcessingComplaints = () => {
       .then((res) => {
         for (var i = 0; i < res.data.length; i++) {
           if (auth.enum === 1) {
-            console.log("@");
             if (auth.email === res.data[i].email) {
               temp[j++] = res.data[i];
             }

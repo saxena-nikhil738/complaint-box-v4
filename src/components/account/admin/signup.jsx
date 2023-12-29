@@ -6,18 +6,20 @@ import TextField from "@mui/material/TextField";
 import "./signup.css";
 import image from "../../../image/login.jpg";
 import { useAuth } from "../../../context/auth";
+import { toast } from "react-toastify";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const token = "";
+  const [error, setError] = useState();
   const navigate = useNavigate();
   const location = useLocation();
   const idfy = location.pathname === "/usersignup" ? 1 : 0;
-  console.log(idfy);
+
   const [auth, setAuth] = useAuth();
-  console.log(auth);
+
   useEffect(() => {
     if (auth.enum === "") {
       navigate("/login");
@@ -27,7 +29,7 @@ const Signup = () => {
     e.preventDefault();
 
     if (username === "" || password === "" || email === "") {
-      alert("Fill required details");
+      setError("Fill requires cridentials!");
     } else {
       await axios
         .post("https://complaint-backend-7u2y.onrender.com/signup", {
@@ -38,16 +40,20 @@ const Signup = () => {
           token,
         })
         .then((res) => {
+          setError(res.data.message);
           if (!res.data.success) {
-            alert("Email already exist");
+            setError(res.data.message);
           } else {
-            console.log(res);
+            toast.success("User registered!", {
+              position: toast.POSITION.TOP_RIGHT,
+              className: "toast-message",
+              autoClose: 2000,
+            });
             navigate("/dashboard");
-            alert("New admin created");
           }
         })
         .catch((e) => {
-          alert("Email already exist");
+          alert("Something went wrong");
           console.log(e);
         });
     }
@@ -105,6 +111,13 @@ const Signup = () => {
                   label="Enter password"
                   onChange={(e) => setPassword(e.target.value)}
                 />
+              </div>
+              <div
+                className={
+                  error === undefined ? "invisible-error" : "visible-error mb-3"
+                }
+              >
+                {error}
               </div>
               <div>
                 <button

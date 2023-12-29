@@ -28,7 +28,7 @@ const RejectedComplaints = () => {
 
   //search-box
   const [search, setSearch] = useState("");
-  // console.log(compData);
+
   const nPages = Math.ceil(compData.length / recordsPerPage);
   // User is currently on this page
 
@@ -41,7 +41,6 @@ const RejectedComplaints = () => {
     axios
       .get(`https://complaint-backend-7u2y.onrender.com/rejected`)
       .then((res) => {
-        console.log(res.data);
         for (var i = 0; i < res.data.length; i++) {
           if (auth.enum === 1) {
             if (auth.email === res.data[i].email) {
